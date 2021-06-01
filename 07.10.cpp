@@ -1,104 +1,108 @@
 #include <iostream>
+
 using namespace std;
 
-class Currency
-{
+class Currency {
 private:
     string name;
-    int a_value;
-    int a_cents;
-    int b_value;
-    int b_cents;
+    int value{};
+    int cents{};
 public:
-    void readCurrency(void);
-    void printCurrency(void);
-    int callAddition(void);
-    int callSubtraction(void);
+    void readCurrency();
+
+    void printCurrency();
+
+    int addition(const Currency &currency) const;
+
+    int subtraction(const Currency &currency) const;
+
+    int getValue() const;
 };
 
-void Currency::readCurrency(void)
-{
-    cout<<"Enter name of currency: ";
-    cin>>name;
-    cout<<"Enter first  value: ";
-    cin>>a_value;
-    cout<<"Enter first cents: ";
-    cin>>a_cents;
-    cout<<"Enter second value: ";
-    cin>>b_value;
-    cout<<"Enter second cents: ";
-    cin>>b_cents;
+
+void Currency::readCurrency() {
+    cout << "name: ";
+    cin >> name;
+    cout << "value: ";
+    cin >> value;
+    cout << "cents: ";
+    cin >> cents;
 }
 
-void Currency::printCurrency(void)
-{
-    cout<<"first value= "<<a_value<<", first cents= "<<a_cents<<endl;
-    cout<<"second value= "<<b_value<<", second cents= "<<b_cents<<endl;
+void Currency::printCurrency() {
+    cout << name << " with value = " << value << " and cents = " << cents << endl;
 }
 
-int Currency::callAddition(void)
-{
-    return (a_value+b_value, a_cents+b_cents);
-}
-int Currency::callSubtraction(void)
-{
-    return (abs(a_value-b_value) + abs(a_cents-b_cents));
+int Currency::addition(const Currency &currency) const {
+    return value * cents + currency.value * currency.cents;
 }
 
-class Product
-{
+int Currency::subtraction(const Currency &currency) const {
+    return value * cents - currency.value * currency.cents;
+}
+
+int Currency::getValue() const {
+    return value;
+}
+
+class Product {
 private:
     string name;
-    int price;
-    string name_of_currency;
+    Currency currency;
+    int price{};
     string count;
 public:
+    Product(Currency currency_) : currency(move(currency_)) {}
+
     void readProduct();
-    int callAddition(Product p);
-    int callSubtraction(Product p);
+
+    void printProduct();
+
+    int addition(const Product &product) const;
+
+    int subtraction(const Product &product) const;
 };
 
-void Product::readProduct()
-{
-    cout<<"Enter name of currency: ";
-    cin>>name_of_currency;
-    cout<<"Enter name of product: ";
-    cin>>name;
-    cout<<"Enter count: ";
-    cin>>count;
-    cout<<"Enter price: ";
-    cin>>price;
+void Product::readProduct() {
+    cout << "name: ";
+    cin >> name;
+    cout << "price: ";
+    cin >> price;
+    cout << "count: ";
+    cin >> count;
+}
+
+void Product::printProduct() {
+    cout << "name: " << name << endl;
+    currency.printCurrency();
+    cout << "price: " << price << endl;
+    cout << "count: " << count << endl;
+}
+
+int Product::addition(const Product &product) const {
+    return price * currency.getValue() + product.price * product.currency.getValue();
+}
+
+int Product::subtraction(const Product &product) const {
+    return price * currency.getValue() - product.price * product.currency.getValue();
 }
 
 
-int Product::callAddition(Product p)
-{
-    return this->price + p.price;
-}
-int Product::callSubtraction(Product p)
-{
-    return abs(this->price - p.price);
-}
+int main() {
+    Currency c1, c2;
+    c1.readCurrency();
+    c2.readCurrency();
+    cout << "first + second = " << c1.addition(c2) << endl;
+    cout << "first - seconnd = " << c1.subtraction(c2) << endl;
+    c1.printCurrency();
+    c2.printCurrency();
 
-
-int main()
-{
-    Currency num;
-    int add;
-    int sub;
-    num.readCurrency();
-    add = num.callAddition();
-    sub = num.callSubtraction();
-    num.printCurrency();
-    cout<<"Addition/sum= "<<add<<endl;
-    cout<<"Subtraction= "<<sub<<endl;
-
-    Product pr1;
-    pr1.readProduct();
-    Product pr2;
-    pr2.readProduct();
-    cout << pr1.callAddition(pr2) << endl;
-    cout << pr1.callSubtraction(pr2) << endl;
-    
+    Product p1(c1), p2(c2);
+    p1.readProduct();
+    p2.readProduct();
+    p1.printProduct();
+    p2.printProduct();
+    cout << "p1 + p2 = " << p1.addition(p2) << endl;
+    cout << "p1 - p2 = " << p1.subtraction(p2) << endl;
     return 0;
 }
